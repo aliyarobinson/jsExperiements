@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Slider</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="">
+    <style>
+    body{background: #ccc;}
+      .slider.container{width: 450px; height: 270px;margin: 0 auto; overflow: hidden;
+                        -webkit-box-shadow: 0px 10px 10px -6px rgba(69, 64, 64, 0.2);
+                        box-shadow: 0px 10px 10px -6px rgba(69, 64, 64, 0.2);}
+      .slider ul{list-style: none; height: 230px; width: 4950px; position: relative; left:0px; padding:0; margin:0;}
+      .slider ul li{padding: 0; margin: 0; position: absolute; z-index: 1; left:0;}
+      .slider ul li:first-child{z-index: 2;}
+      .slider .controls{background-color: transparent;}
+      .slider .control{ padding: 5px 10px; background: rgba(0,0,0,0.7); color:#fff; font: bold 18px; }
+      .slider .bullets{ width: auto; margin: 0 auto; text-align: center;}
+      .slider .bullets .bullet{ width: 10px; background: rgb(168, 47, 47); height: 10px; margin: 0 5px; display: inline-block;}
+      .slider .currentS, .slider .nextS{left:0;top:0; z-index:2;}
+    </style>
+  </head>
+  <body>
+    <div class="slider container">
+      <div class="controls">
+        <a href="#" class="control prev">&lt;</a>
+        <a href="#" class="control next">&gt;</a>
+        <div class="bullets"></div>
+      </div>
+      <ul>
+        <li><img src="http://placehold.it/450X250/badbad/000000&text=Image+1" /></li>
+        <li><img src="http://placehold.it/450X250/ef76a3/000000&text=Image+2" /></li>
+        <li><img src="http://placehold.it/450X250/769eef/000000&text=Image+3" /></li>
+        <li><img src="http://placehold.it/450X250/efd776/000000&text=Image+4" /></li>
+        <li><img src="http://placehold.it/450X250/efa176/000000&text=Image+5" /></li>
+        <li><img src="http://placehold.it/450X250/76efe5/000000&text=Image+6" /></li>
+        <li><img src="http://placehold.it/450X250/ef7690/000000&text=Image+7" /></li>
+        <li><img src="http://placehold.it/450X250/c676ef/000000&text=Image+8" /></li>
+        <li><img src="http://placehold.it/450X250/b4de36/000000&text=Image+9" /></li>
+        <li><img src="http://placehold.it/450X250/6936de/000000&text=Image+10" /></li>
+        <li><img src="http://placehold.it/450X250/de36ad/000000&text=Image+11" /></li>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script>
+
+    ;(function($) {
+        // declare var in global scope
+        window.SLIDERMOD = {};
+
+
+
+        SLIDERMOD.HORIZ_SLIDE = {
+
+            slideCnt : 0,
+            slide : $('.slider ul li'),
+            w : $('.slider ul li img').outerWidth(),
+            
+
+            init: function()
+            {
+                that = this;
+
+                for(i=0;i<that.slide.length;i++){
+                  $('<a></a>',{'class':'bullet', 'href':'#'}).appendTo('.slider .controls .bullets')
+                }
+
+                $('.bullets').on('click','.bullet', that.clickBull);
+
+                $('.controls').on('click','.next', that.nextSlide);
+
+                $('.controls').on('click','.prev', that.prevSlide);
+            },
+
+            clickBull: function()
+            {
+              currentSlide = that.slideCnt;
+              thisSlide = $(this).index();          
+              if(currentSlide < thisSlide){
+                  if(thisSlide == 10){that.slideCnt = 0;}
+                  else{that.slideCnt = thisSlide  + 1;}              
+                  that.prevSlide();
+              }else{
+                that.slideCnt = thisSlide - 1;
+                that.nextSlide();
+              }                  
+            },
+
+            nextSlide: function()
+            {
+              $('.nextS').remove();
+              $('.slider ul li')
+                  .eq(SLIDERMOD.HORIZ_SLIDE.slideCnt)
+                  .clone()
+                  .appendTo('.slider ul')
+                  .addClass('currentS')
+                  .animate({
+                    'left': '-1' * SLIDERMOD.HORIZ_SLIDE.w
+                  },function(){$('.currentS').remove();});
+              $('.slider ul li')
+                  .eq((SLIDERMOD.HORIZ_SLIDE.slideCnt == 10) ? SLIDERMOD.HORIZ_SLIDE.slideCnt = 0 : SLIDERMOD.HORIZ_SLIDE.slideCnt + 1)
+                  .clone()
+                  .appendTo('.slider ul')
+                  .addClass('nextS')
+                  .css({
+                    'left':SLIDERMOD.HORIZ_SLIDE.w
+                  })
+                  .animate({
+                    'left': 0
+                  });
+              SLIDERMOD.HORIZ_SLIDE.slideCnt++;  
+            },
+
+            prevSlide: function(){  
+              $('.nextS').remove();  
+
+              $('.slider ul li')
+                  .eq(SLIDERMOD.HORIZ_SLIDE.slideCnt)
+                  .clone()
+                  .appendTo('.slider ul')
+                  .addClass('currentS')
+                  .animate({
+                    'left': SLIDERMOD.HORIZ_SLIDE.w
+                  },function(){$('.currentS').remove();});
+              $('.slider ul li')
+                  .eq((SLIDERMOD.HORIZ_SLIDE.slideCnt == 0) ? SLIDERMOD.HORIZ_SLIDE.slideCnt = 10 : SLIDERMOD.HORIZ_SLIDE.slideCnt - 1)
+                  .clone()
+                  .appendTo('.slider ul')
+                  .addClass('nextS')
+                  .css({
+                    'left':'-1' * SLIDERMOD.HORIZ_SLIDE.w
+                  })
+                  .animate({
+                    'left': 0
+                  });
+              SLIDERMOD.HORIZ_SLIDE.slideCnt--;  
+            }
+        }
+     
+    })(jQuery);
+    SLIDERMOD.HORIZ_SLIDE.init(); //function call
+    </script>
+
+  </body>
+</html>
